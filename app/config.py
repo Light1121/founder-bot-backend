@@ -27,5 +27,5 @@ class Config:
     
     MONGODB_URI = os.getenv(
         "MONGODB_URI", 
-        "mongodb://ROOTchatbot:ROOTchatbot@127.0.0.1:27018/founderbot-api"
+        "mongodb://ROOTchatbot:ROOTchatbot@mongo_chatbot:27017/founderbot-api?authSource=admin"
     )
