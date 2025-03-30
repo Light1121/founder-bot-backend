@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  mongo_chatbot:
+    image: mongo:latest
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ROOTchatbot
+      MONGO_INITDB_ROOT_PASSWORD: ROOTchatbot
+    ports:
+      - "27018:27017"
+    volumes:
+      - ./data/mongo_chatbot:/data/db
+
+# version: "3.9"
+
+# services:
+#   backend:
+#     build: .
+#     ports:
+#       - "5000:5000"
+#     environment:
+#       - MONGODB_URI=mongodb://ROOTchatbot:ROOTchatbot@mongo_chatbot:27017/founderbot-api?authSource=admin
+#     depends_on:
+#       - mongo_chatbot
+
+#   mongo_chatbot:
+#     image: mongo:latest
+#     environment:
+#       MONGO_INITDB_ROOT_USERNAME: ROOTchatbot
+#       MONGO_INITDB_ROOT_PASSWORD: ROOTchatbot
+#     volumes:
+#       - mongo_data:/data/db
+
+# volumes:
+#   mongo_data:
