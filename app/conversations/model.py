@@ -2,7 +2,7 @@ from flask_mongoengine import Document
 from mongoengine.fields import StringField, IntField,DateTimeField
 
 class Conversation(Document):
-    Conversationid = IntField()
+    Conversationid = IntField(required = True, unique = True)
     name = StringField()
     timestamp = DateTimeField()
 

@@ -12,17 +12,18 @@ services:
     volumes:
       - ./data/mongo_chatbot:/data/db
 
+
 # version: "3.9"
 
 # services:
-#   backend:
-#     build: .
-#     ports:
-#       - "5000:5000"
-#     environment:
-#       - MONGODB_URI=mongodb://ROOTchatbot:ROOTchatbot@mongo_chatbot:27017/founderbot-api?authSource=admin
-#     depends_on:
-#       - mongo_chatbot
+  backend:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGODB_URI=mongodb://ROOTchatbot:ROOTchatbot@mongo_chatbot:27017/founderbot-api?authSource=admin
+    depends_on:
+      - mongo_chatbot
 
 #   mongo_chatbot:
 #     image: mongo:latest

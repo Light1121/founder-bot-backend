@@ -1,5 +1,8 @@
+import datetime
 from flask_restx import Namespace, Resource
 from flask import request
+
+from .model import Conversation as ConversationModel
 
 api = Namespace("conversations")
 
@@ -49,8 +52,14 @@ class Conversation(Resource):
 
     
     def post(self): # when user start new chat
-        print(request.data) 
-        return {"id": 1, "name": "name of convo"}, 201
+        request_conversation = request.json
+        conversation = ConversationModel()
+        conversation.Conversationid = request_conversation['Conversationid']
+        conversation.name = request_conversation['name']
+        conversation.timestamp = datetime.datetime.utcnow()
+        conversation.save()
+        print(conversation._data)
+        return "OK", 201
 
     
     def delete(self): # when user remove chat
