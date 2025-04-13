@@ -4,13 +4,40 @@ git clone https://github.com/Light1121/founder-bot-backend.git cd founder-bot-ba
 
 测试接口 curl http://localhost:5000/api/conversations
 
-29/03/2025
+BOT_LOCAL --> http://127.0.0.1:5000//api
 
-still dummy data
 
-do this in postman for now
-BOT_LOCAL = http://127.0.0.1:5000/
-GET conversations list --> {{BOT_LOCAL}}/conversations
-GET conversation ID = 1 --> {{BOT_LOCAL}}/conversations/dummyConvoID1
-POST create conversation ID = 1 --> {{BOT_LOCAL}}/conversations/dummyConvoID1
-DEL create conversation ID = 1 --> {{BOT_LOCAL}}/conversations/dummyConvoID1
+13/04/2025
+
+conversation
+
+    GET conversations list --> {{BOT_LOCAL}}/conversations
+
+    POST create conversation --> {{BOT_LOCAL}}/conversations/
+
+        {
+            "conversation_name": "1111"
+        }
+
+    GET conversation ID -->  {{BOT_LOCAL}}/conversations/{conversation_id}
+
+    DEL delete conversation ID --> {{BOT_LOCAL}}/conversations/{conversation_id}
+
+messages
+
+    GET messsages --> {{BOT_LOCAL}}/conversations/{conversation_id}/messages
+
+    POST send messsage --> {{BOT_LOCAL}}/conversations/{conversation_id}/messages
+
+        {
+        "role": "user",
+        "content": "Outline a business plan for a photo"
+        }
+
+    GET message ID --> {{BOT_LOCAL}}/conversations/{conversation_id}/messages/{messages_id}
+
+    DELETE --> {{BOT_LOCAL}}/conversations/{conversation_id}/messages{messages_id}
+
+BOT
+
+    POST gemini/text --> {{BOT_LOCAL}}/gemini/text
