@@ -1,4 +1,4 @@
-format = """
+BUSINESS_PLAN_TEMPLATE  = """
 Please use this formate to output a Startup Business Plan for user input
 here is the format for you to refer
 
@@ -77,3 +77,32 @@ here is the format for you to refer
 - **Network Effects**: How you'll achieve critical mass for your platform
 - **Long-term Vision**: 3-5 year outlook for your crypto project
 """
+
+
+# @api.route("/<string:conversation_id>/messages")
+# class Messages(Resource):
+#     def get(self, conversation_id):
+#         conversation = ConversationModel.objects(conversation_id=conversation_id).first()
+#         if not conversation:
+#             return {"error": "Conversation not found"}, 404
+#         return {"messages": [message.to_dict() for message in conversation.messages]}
+
+#     def post(self, conversation_id):
+#         conversation = ConversationModel.objects(conversation_id=conversation_id).first()
+#         if not conversation:
+#             return {"error": "Conversation not found"}, 404
+
+#         request_data = request.json
+#         new_message = MessageModel(
+#             message_id=str(uuid.uuid4()),
+#             role=request_data.get("role"),
+#             content=request_data.get("content"),
+#             file_url=request_data.get("file_url"),
+#             image_url=request_data.get("image_url"),
+#             timestamp=datetime.datetime.utcnow()
+#         )
+
+#         conversation.messages.append(new_message)
+#         conversation.save()
+
+#         return new_message.to_dict(), 201

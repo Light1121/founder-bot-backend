@@ -9,6 +9,7 @@ class Message(EmbeddedDocument):
     content = StringField(required=True)
     file_url = StringField()
     image_url = StringField()
+    mode = StringField(choices=('chat', 'report'), default='chat')
     timestamp = DateTimeField(required=True)
 
 
@@ -19,6 +20,7 @@ class Message(EmbeddedDocument):
             "content": self.content,
             "file_url": self.file_url if self.file_url else None,
             "image_url": self.image_url if self.image_url else None,
+            "mode": self.mode,
             "timestamp": self.timestamp.isoformat()
         }
 

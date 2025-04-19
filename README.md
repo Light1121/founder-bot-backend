@@ -23,6 +23,8 @@ conversation
 
     DEL delete conversation ID --> {{BOT_LOCAL}}/conversations/{conversation_id}
 
+    PUT Change Convo Name by ID --> {{BOT_LOCAL}}/conversations/{conversation_id}
+
 messages
 
     GET messsages --> {{BOT_LOCAL}}/conversations/{conversation_id}/messages

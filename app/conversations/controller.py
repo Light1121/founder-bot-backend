@@ -66,10 +66,12 @@ class Messages(Resource):
             return {"error": "Conversation not found"}, 404
         
         request_data = request.json
+        ai_mode = request_data.get("mode", "chat")
         user_message = MessageModel(
             message_id=str(uuid.uuid4()),
             role=request_data.get("role"),
             content=request_data.get("content"),
+            mode = ai_mode,
             file_url=request_data.get("file_url"),
             image_url=request_data.get("image_url"),
             timestamp=datetime.datetime.utcnow()
@@ -79,30 +81,39 @@ class Messages(Resource):
         conversation.messages.append(user_message)
         conversation.save()
         
-        # when use sent message and its text, then generate respond
+        # When user sent message and its text, then generate response
         if request_data.get("role") == "user" and request_data.get("content"):
+            from bots.service import generate_text 
+            user_input = request_data.get("content")
+            if ai_mode == "report":
+                # For report mode, use the template
+                from .format import BUSINESS_PLAN_TEMPLATE
+                prompt = f"{BUSINESS_PLAN_TEMPLATE}\n\n User Input: {user_input}"
+            else:
+                # Regular chat: just send user content
+                prompt = user_input
 
-                from bots.service import generate_text 
-                # use bot
-                bot_response = generate_text(f"{format},\n\n User Input here: "+str(request_data.get("content")))
-                
-                # AI respond
-                ai_message = MessageModel(
-                    message_id=str(uuid.uuid4()),
-                    role="gemini",  # 指定角色为 gemini
-                    content=bot_response,
-                    timestamp=datetime.datetime.utcnow()
-                )
-                
-                # AI append to convo
-                conversation.messages.append(ai_message)
-                conversation.save()
-                
-                # return user AND AI output
-                return {
-                    "user_message": user_message.to_dict(),
-                    "ai_message": ai_message.to_dict()
-                }, 201
+            # Ensure generate_text returns a proper MessageModel instance
+            ai_response = generate_text(prompt)
+            
+            # Create a proper MessageModel for AI response
+            ai_message = MessageModel(
+                message_id=str(uuid.uuid4()),
+                role="assistant",
+                content=ai_response if isinstance(ai_response, str) else ai_response.get("content", ""),
+                mode=ai_mode,
+                timestamp=datetime.datetime.utcnow()
+            )
+            
+            # AI append to convo
+            conversation.messages.append(ai_message)
+            conversation.save()
+            
+            # Return user AND AI output
+            return {
+                "user_message": user_message.to_dict(),
+                "ai_message": ai_message.to_dict()
+            }, 201
     
 @api.route("/<string:conversation_id>/messages/<string:message_id>")
 class Message(Resource):
