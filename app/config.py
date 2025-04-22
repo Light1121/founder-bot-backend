@@ -7,6 +7,17 @@ class Config(Config):
     load_dotenv()
     ENABLE_UTC = True
     APP_NAME = "founder-bot"
+
+    MONGODB_SETTINGS = {
+        "db": "founder-bot",
+        "host": "mongodb+srv://ROOTchatbot:ROOTchatbot@cluster0.o6c3pg1.mongodb.net/founder-bot?retryWrites=true&w=majority&appName=Cluster0",
+        "username": "ROOTchatbot",
+        "password": "ROOTchatbot",
+        "authentication_source": "admin"
+    }
+
+
+
     #official one please name the database to  "mongo_chatbot"
     # dont use localhost
     # MONGODB_HOST = "127.0.0.1"
@@ -16,13 +27,6 @@ class Config(Config):
     # MONGODB_USERNAME = "ROOTchatbot"
     # MONGODB_PASSWORD = "ROOTchatbot"
     # MONGODB_AUTHENTICATION_SOURCE = "admin"
-    MONGODB_SETTINGS = {
-        "db": "founder-bot",
-        "host": "mongodb+srv://ROOTchatbot:ROOTchatbot@cluster0.o6c3pg1.mongodb.net/founder-bot?retryWrites=true&w=majority&appName=Cluster0",
-        "username": "ROOTchatbot",
-        "password": "ROOTchatbot",
-        "authentication_source": "admin"
-    }
 
 
 # import os
