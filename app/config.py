@@ -8,15 +8,23 @@ class Config(Config):
     ENABLE_UTC = True
     APP_NAME = "founder-bot"
 
-    MONGODB_SETTINGS = {
-        "db": "founder-bot",
-        "host": "mongodb+srv://ROOTchatbot:ROOTchatbot@cluster0.o6c3pg1.mongodb.net/founder-bot?retryWrites=true&w=majority&appName=Cluster0",
-        "username": "ROOTchatbot",
-        "password": "ROOTchatbot",
-        "authentication_source": "admin"
-    }
-
-
+    # Get MongoDB URI from environment variable or fall back to the Atlas URI
+    mongodb_uri = os.getenv("MONGODB_URI", "mongodb+srv://ROOTchatbot:ROOTchatbot@cluster0.o6c3pg1.mongodb.net/founder-bot?retryWrites=true&w=majority&appName=Cluster0")
+    
+    # Parse the URI for MongoDB settings
+    if "mongodb://" in mongodb_uri or "mongodb+srv://" in mongodb_uri:
+        MONGODB_SETTINGS = {
+            "host": mongodb_uri
+        }
+    else:
+        # Fallback to the original settings if URI parsing fails
+        MONGODB_SETTINGS = {
+            "db": "founder-bot",
+            "host": "mongodb+srv://ROOTchatbot:ROOTchatbot@cluster0.o6c3pg1.mongodb.net/founder-bot?retryWrites=true&w=majority&appName=Cluster0",
+            "username": "ROOTchatbot",
+            "password": "ROOTchatbot", 
+            "authentication_source": "admin"
+        }
 
     #official one please name the database to  "mongo_chatbot"
     # dont use localhost

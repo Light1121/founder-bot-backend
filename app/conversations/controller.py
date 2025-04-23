@@ -83,7 +83,7 @@ class Messages(Resource):
         
         # When user sent message and its text, then generate response
         if request_data.get("role") == "user" and request_data.get("content"):
-            from bots.service import generate_text 
+            from ..bots.service import generate_text 
             user_input = request_data.get("content")
             if ai_mode == "report":
                 # For report mode, use the template
