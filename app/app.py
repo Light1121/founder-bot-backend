@@ -1,10 +1,10 @@
 from flask import Flask
 from flask_restx import Api
 from flask_mongoengine import MongoEngine
-
-from .conversations.controller import api as conversations_api
 from .config import Config
 
+from .conversations.controller import api as conversations_api
+from .files.controller import api as files_api
 from .bots.controller import api as gemini_api
 from .bots.service import list_available_models
 
@@ -16,7 +16,7 @@ MongoEngine(app)
 api = Api(app, prefix="/api")
 
 api.add_namespace(conversations_api)
-
+api.add_namespace(files_api)
 api.add_namespace(gemini_api)
 
 
