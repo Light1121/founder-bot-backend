@@ -12,7 +12,6 @@ class ConversationsList(Resource):
     def get(self): # when user lick chat bot
         conversations = ConversationModel.objects()
         result = [conversation.to_dict() for conversation in conversations]
-        print(result)
         return result
     
     def post(self):
@@ -58,62 +57,69 @@ class Messages(Resource):
         conversation = ConversationModel.objects(conversation_id=conversation_id).first()
         if not conversation:
             return {"error": "Conversation not found"}, 404
-        return {"messages": [message.to_dict() for message in conversation.messages]}
-    
+        return {"messages": [m.to_dict() for m in conversation.messages]}
+
     def post(self, conversation_id):
         conversation = ConversationModel.objects(conversation_id=conversation_id).first()
         if not conversation:
             return {"error": "Conversation not found"}, 404
-        
-        request_data = request.json
-        ai_mode = request_data.get("mode", "chat")
+
+        data = request.json
+        ai_mode = data.get("mode", "general_chat")
         user_message = MessageModel(
             message_id=str(uuid.uuid4()),
-            role=request_data.get("role"),
-            content=request_data.get("content"),
-            mode = ai_mode,
-            file_url=request_data.get("file_url"),
-            image_url=request_data.get("image_url"),
+            role=data.get("role"),
+            content=data.get("content"),
+            mode=ai_mode,
+            file_url=data.get("file_url"),
+            image_url=data.get("image_url"),
             timestamp=datetime.datetime.utcnow()
         )
-        
-        # save the current input from user
         conversation.messages.append(user_message)
         conversation.save()
-        
-        # When user sent message and its text, then generate response
-        if request_data.get("role") == "user" and request_data.get("content"):
-            from bots.service import generate_text 
-            user_input = request_data.get("content")
-            if ai_mode == "report":
-                # For report mode, use the template
-                from .format import BUSINESS_PLAN_TEMPLATE
-                prompt = f"{BUSINESS_PLAN_TEMPLATE}\n\n User Input: {user_input}"
-            else:
-                # Regular chat: just send user content
-                prompt = user_input
 
-            # Ensure generate_text returns a proper MessageModel instance
-            ai_response = generate_text(prompt)
-            
-            # Create a proper MessageModel for AI response
+        # 对user text message触发 AI 回复
+        if data.get("role") == "user" and data.get("content"):
+            user_input = data["content"]
+
+            # different mode if AI
+            if ai_mode == "startup_guide":
+                from ..bots.startup_guide.service import plan_startup
+                ai_content = plan_startup(user_input)
+            elif ai_mode == "draft_assistant":
+                from ..bots.draft_assistant.service import draft_doc
+                ai_content = draft_doc(user_input)
+            elif ai_mode == "trends_analyst":
+                from ..bots.trends_analyst.service import analyze_trends
+                ai_content = analyze_trends(user_input)
+            elif ai_mode == "network_connect":
+                from ..bots.network_connect.service import build_network
+                ai_content = build_network(user_input)
+            elif ai_mode == "insight_engine":
+                from ..bots.insight_engine.service import generate_insight
+                ai_content = generate_insight(user_input)
+            else:
+                # default to general chat
+                from ..bots.general_chat.service import chat_general
+                ai_content = chat_general(user_input)
+
             ai_message = MessageModel(
                 message_id=str(uuid.uuid4()),
                 role="assistant",
-                content=ai_response if isinstance(ai_response, str) else ai_response.get("content", ""),
+                content=ai_content,
                 mode=ai_mode,
                 timestamp=datetime.datetime.utcnow()
             )
-            
-            # AI append to convo
             conversation.messages.append(ai_message)
             conversation.save()
-            
-            # Return user AND AI output
+
             return {
                 "user_message": user_message.to_dict(),
                 "ai_message": ai_message.to_dict()
             }, 201
+
+        # if not user message, save and no AI respond
+        return user_message.to_dict(), 201
     
 @api.route("/<string:conversation_id>/messages/<string:message_id>")
 class Message(Resource):

@@ -9,7 +9,7 @@ class Message(EmbeddedDocument):
     content = StringField(required=True)
     file_url = StringField()
     image_url = StringField()
-    mode = StringField(choices=('chat', 'report'), default='chat')
+    mode = StringField()
     timestamp = DateTimeField(required=True)
 
 
