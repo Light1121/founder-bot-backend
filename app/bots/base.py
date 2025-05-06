@@ -1,9 +1,9 @@
 import os
+import mimetypes
 from google import genai
 from google.genai import types
-import mimetypes
 
-# 从环境变量读取 API Key
+# get API Key from env
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 
 def init_gemini_client():
@@ -65,3 +65,29 @@ def generate_image(prompt: str, model: str = "gemini-1.5-flash") -> str:
                     f.write(inline.data)
                 return path
     return "No image generated."
+
+
+def generate_text_stream(prompt: str, model: str = "gemini-1.5-pro"):
+    """
+    流式文本生成器：yield 每次从 Gemini 拉到的一小段文本。
+    """
+    client = init_gemini_client()
+    contents = [
+        types.Content(
+            role="user",
+            parts=[types.Part.from_text(text=prompt)]
+        ),
+    ]
+    config = types.GenerateContentConfig(
+        response_modalities=["text"],
+        response_mime_type="text/plain",
+    )
+
+    for chunk in client.models.generate_content_stream(
+        model=model,
+        contents=contents,
+        config=config
+    ):
+        # 每个 chunk.candidates[0].content.parts[0].text 都是一小段
+        text = chunk.candidates[0].content.parts[0].text
+        yield text

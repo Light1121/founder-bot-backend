@@ -2,6 +2,7 @@ import uuid
 import datetime
 from flask_restx import Namespace, Resource
 from flask import request
+from flask import Response, stream_with_context
 
 from .model import Conversation as ConversationModel, Message as MessageModel
 
@@ -83,7 +84,12 @@ class Messages(Resource):
             user_input = data["content"]
 
             # different mode if AI
-            if ai_mode == "startup_guide":
+            if ai_mode == "suggestion":
+                from ..bots.suggestion.service import get_suggestions
+                suggestions = get_suggestions(user_input)
+                # 构造一个拼接好的回复字符串
+                ai_content = "\n".join(f"{i+1}. {s}" for i, s in enumerate(suggestions))
+            elif ai_mode == "startup_guide":
                 from ..bots.startup_guide.service import plan_startup
                 ai_content = plan_startup(user_input)
             elif ai_mode == "draft_assistant":
@@ -146,3 +152,30 @@ class Message(Resource):
                 return {"message": "Message deleted successfully"}, 200
         
         return {"error": "Message not found"}, 404
+    
+
+@api.route("/<string:conversation_id>/messages/stream")
+class MessagesStream(Resource):
+    def post(self, conversation_id):
+        from ..bots.base import generate_text_stream
+
+        user_input = request.json.get("content", "")
+
+        # SSE
+        def event_stream():
+            # start event
+            yield "event: start\ndata: \n\n"
+
+            # only send small part
+            for text in generate_text_stream(user_input):
+                # 以 SSE 格式推送
+                yield f"data: {text}\n\n"
+
+            #done 标记
+            yield "event: done\ndata: \n\n"
+
+        # return Response
+        return Response(
+            stream_with_context(event_stream()),
+            mimetype="text/event-stream"
+        )
