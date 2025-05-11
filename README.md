@@ -33,11 +33,24 @@ BOT_LOCAL --> http://127.0.0.1:5000//api
         "content": "Outline a business plan for a photo"
         }
 
+    POST streaming respond from AI --> {{BOT_LOCAL}}/conversations/{conversation_id}/messages/stream
+
     GET message ID --> {{BOT_LOCAL}}/conversations/{conversation_id}/messages/{messages_id}
 
     DELETE --> {{BOT_LOCAL}}/conversations/{conversation_id}/messages{messages_id}
 
     GET suggestion --> {{BOT_LOCAL}}/conversations/{conversation_id}/messages/{messages_id}/suggestions
+
+    example:
+
+    {
+    "message_id": "8f496930-885b-4f40-b56d-44eab73bd877",
+    "suggestions": [
+        "sugesstion 1",
+        "suggestion 2",
+        "suggestion 3",
+        "suggestion 4"
+    ]}
 
 >>> doc
     
