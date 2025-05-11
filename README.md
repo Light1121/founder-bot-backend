@@ -37,9 +37,7 @@ BOT_LOCAL --> http://127.0.0.1:5000//api
 
     DELETE --> {{BOT_LOCAL}}/conversations/{conversation_id}/messages{messages_id}
 
->>> BOT
-
-    POST gemini/text --> {{BOT_LOCAL}}/gemini/text
+    GET suggestion --> {{BOT_LOCAL}}/conversations/{conversation_id}/messages/{messages_id}/suggestions
 
 >>> doc
     

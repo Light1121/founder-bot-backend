@@ -152,6 +152,36 @@ class Message(Resource):
                 return {"message": "Message deleted successfully"}, 200
         
         return {"error": "Message not found"}, 404
+
+@api.route("/<string:conversation_id>/messages/<string:message_id>/suggestions")
+class MessageSuggestions(Resource):
+    def get(self, conversation_id, message_id):
+        conversation = ConversationModel.objects(conversation_id=conversation_id).first()
+        if not conversation:
+            return {"error": "Conversation not found"}, 404
+        
+        # Find the target message
+        target_message = None
+        for message in conversation.messages:
+            if message.message_id == message_id:
+                target_message = message
+                break
+                
+        if not target_message:
+            return {"error": "Message not found"}, 404
+            
+        # Only generate suggestions for assistant messages
+        if target_message.role != "assistant":
+            return {"error": "Suggestions can only be generated for assistant messages"}, 400
+            
+        # Generate suggestions based on AI response
+        from ..bots.suggestion.service import get_response_suggestions
+        suggestions = get_response_suggestions(target_message.content)
+        
+        return {
+            "message_id": message_id,
+            "suggestions": suggestions
+        }
     
 
 @api.route("/<string:conversation_id>/messages/stream")

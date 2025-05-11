@@ -6,3 +6,12 @@ User message:
 ---- 
 Please list them by serial number 1. 2. 3. 4.
 """
+
+RESPONSE_SUGGESTION_TEMPLATE = """
+Based on the AI's response to the user, generate 4 follow-up questions or comments (one sentence each) that the user could use to continue the conversation:
+---- 
+AI response: 
+{response}
+---- 
+Please list them by serial number 1. 2. 3. 4.
+"""

@@ -10,7 +10,7 @@ def init_gemini_client():
     return genai.Client(api_key=GEMINI_API_KEY)
 
 
-def generate_text(prompt: str, model: str = "gemini-1.5-pro") -> str:
+def generate_text(prompt: str, model: str = "gemini-2.0-flash") -> str:
     """
     通用文本生成接口。
     """
@@ -67,7 +67,7 @@ def generate_image(prompt: str, model: str = "gemini-1.5-flash") -> str:
     return "No image generated."
 
 
-def generate_text_stream(prompt: str, model: str = "gemini-1.5-pro"):
+def generate_text_stream(prompt: str, model: str = "gemini-2.0-flash"):
     """
     流式文本生成器：yield 每次从 Gemini 拉到的一小段文本。
     """
