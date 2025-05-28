@@ -97,7 +97,12 @@ class Messages(Resource):
                 ai_content = draft_doc(user_input)
             elif ai_mode == "trends_analyst":
                 from ..bots.trends_analyst.service import analyze_trends
-                ai_content = analyze_trends(user_input)
+                import json
+                ai_result = analyze_trends(user_input)
+                if not isinstance(ai_result, str):
+                    ai_content = json.dumps(ai_result, ensure_ascii=False)
+                else:
+                    ai_content = ai_result
             elif ai_mode == "network_connect":
                 print("HELLO WORLD")
                 from ..bots.network_connect.service import build_network
