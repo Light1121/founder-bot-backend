@@ -99,8 +99,14 @@ class Messages(Resource):
                 from ..bots.trends_analyst.service import analyze_trends
                 ai_content = analyze_trends(user_input)
             elif ai_mode == "network_connect":
+                print("HELLO WORLD")
                 from ..bots.network_connect.service import build_network
-                ai_content = build_network(user_input)
+                import json
+                ai_result = build_network(user_input)
+                if not isinstance(ai_result, str):
+                    ai_content = json.dumps(ai_result, ensure_ascii=False)
+                else:
+                    ai_content = ai_result
             elif ai_mode == "insight_engine":
                 from ..bots.insight_engine.service import generate_insight
                 ai_content = generate_insight(user_input)
@@ -209,3 +215,12 @@ class MessagesStream(Resource):
             stream_with_context(event_stream()),
             mimetype="text/event-stream"
         )
+
+@api.route("/<string:conversation_id>/messages/network")
+class MessageNetwork(Resource):
+    def post(self, conversation_id):
+        data = request.json or {}
+        user_input = data.get("content", "")
+        from ..bots.network_connect.service import build_network
+        result = build_network(user_input)
+        return result
